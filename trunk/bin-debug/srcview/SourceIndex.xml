@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of exterminatweet</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node icon="cssIcon" label="history.css" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node icon="htmlIcon" label="historyFrame.html" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node icon="htmlIcon" label="index.template.html" url="source/html-template/index.template.html"/>
+			<node icon="swfIcon" label="playerProductInstall.swf" url="source/html-template/playerProductInstall.swf"/>
+			<node label="swfobject.js" url="source/html-template/swfobject.js.txt"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src">
+			<node icon="packageIcon" label="services.twitterfriends" expanded="true">
+				<node icon="actionScriptIcon" label="_Super_TwitterFriends.as" url="source/services/twitterfriends/_Super_TwitterFriends.as.html"/>
+				<node icon="actionScriptIcon" label="TwitterFriends.as" url="source/services/twitterfriends/TwitterFriends.as.html"/>
+			</node>
+			<node label="services.twittertest">
+			</node>
+			<node icon="packageIcon" label="valueObjects" expanded="true">
+				<node icon="actionScriptIcon" label="_StatusEntityMetadata.as" url="source/valueObjects/_StatusEntityMetadata.as.html"/>
+				<node icon="actionScriptIcon" label="_Super_Status.as" url="source/valueObjects/_Super_Status.as.html"/>
+				<node icon="actionScriptIcon" label="_Super_User.as" url="source/valueObjects/_Super_User.as.html"/>
+				<node icon="actionScriptIcon" label="_Super_Users.as" url="source/valueObjects/_Super_Users.as.html"/>
+				<node icon="actionScriptIcon" label="_UserEntityMetadata.as" url="source/valueObjects/_UserEntityMetadata.as.html"/>
+				<node icon="actionScriptIcon" label="_UsersEntityMetadata.as" url="source/valueObjects/_UsersEntityMetadata.as.html"/>
+				<node icon="actionScriptIcon" label="FilteredUser.as" url="source/valueObjects/FilteredUser.as.html"/>
+				<node icon="actionScriptIcon" label="Status.as" url="source/valueObjects/Status.as.html"/>
+				<node icon="actionScriptIcon" label="User.as" url="source/valueObjects/User.as.html"/>
+				<node icon="actionScriptIcon" label="Users.as" url="source/valueObjects/Users.as.html"/>
+			</node>
+			<node icon="mxmlAppIcon" selected="true" label="exterminatweet.mxml" url="source/exterminatweet.mxml.html"/>
+			<node icon="mxmlIcon" label="friendRenderer.mxml" url="source/friendRenderer.mxml.html"/>
+		</node>
+	</nodes>
+	<zipfile label="Download source (ZIP, 43K)" url="exterminatweet.zip">
+	</zipfile>
+	<sdklink label="Download Flex SDK" url="http://www.adobe.com/go/flex4_sdk_download">
+	</sdklink>
+</index>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minHeight="600" minWidth="700" xmlns:twittertest="services.twittertest.*" creationComplete="ccomplete()"   viewSourceURL="srcview/index.html" xmlns:twitterfriends="services.twitterfriends.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.system.System;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.FilteredUser;
+			import valueObjects.Status;
+			import valueObjects.User;
+			
+			protected var unfilteredUsers:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			protected var filteredUsers:ArrayCollection = new ArrayCollection();
+			
+			protected function ccomplete():void{
+				Security.allowDomain("*");
+				
+				friendsResult.addEventListener(ResultEvent.RESULT,onFriendsResult);
+				Alert.show("Entering usernames which are protected can break the application and it may become unresponsive. So do not try protected screennames! Got it?","WARNING!");
+			}
+			
+			protected function onFriendsResult(e:ResultEvent):void{
+				trace("got it");
+				unfilteredUsers = e.target.lastResult.user;
+				var tempUsers:ArrayCollection = new ArrayCollection();
+				trace("-filtering-");
+				for each(var o:Object in unfilteredUsers){
+					var u:User = o as User;
+					
+					var fu:FilteredUser = new FilteredUser();
+					fu.screen_name = u.screen_name;
+					fu.link = "http://www.twitter.com/"+fu.screen_name;
+					fu.profile_image_url = u.profile_image_url;
+					fu.infrequent = false;
+					fu.muchfollowing = false;
+					fu.noob = false;
+					fu.idle = false;
+					fu.undescripted = false;
+					
+					
+					var add:Boolean = false;
+					//check
+					
+					// - follows 80+ more than his followers ? 
+					if(Number(u.friends_count)>=Number(u.followers_count)+80){
+						add=true;
+						fu.muchfollowing = true;
+					}
+					
+					
+					if(u.status){
+						var st:Status = o.status as Status;
+						var dif:Number = (u.screen_name,Date.parse(st.created_at) - Date.parse(u.created_at));
+						var weekMiliseconds:Number = 1209599999;
+						
+						//last post date is too close to creation date
+						if(dif<=weekMiliseconds){
+							fu.noob = true;
+							add = true;
+						}
+						
+						var today:Date = new Date();
+						var msToday:Number = Date.parse(today.toUTCString());
+						var msLastPost:Number = Date.parse(st.created_at);
+						
+						//if user havent posted anything in the last 2 weeks
+						if((msToday-msLastPost)/weekMiliseconds>1){
+							fu.infrequent = true;
+							add = true;
+						}
+					}
+					
+					// has less than 20 tweets
+					if(Number(u.statuses_count) <20){
+						fu.idle = true;
+						add=true;
+					}
+					
+					// has a description less than 10 characters
+					if(String(u.description).length<10){
+						fu.undescripted = true;
+						add=true;
+					}
+					
+					//add
+					//if(add)tempUsers.addItem(o);
+					if(add)tempUsers.addItem(fu);
+				}
+				
+				
+				
+				filteredUsers = tempUsers;
+				
+				txt_total.text = ""+unfilteredUsers.length;
+				txt_filtered.text = ""+filteredUsers.length;
+				
+				trace("-filtering done-");
+			}
+			
+			protected function gobtn_clickHandler(event:Event=null):void
+			{
+				friendsResult.token = twitterTest.friends(uname.text);
+				trace("sent");
+			}
+			
+			
+
+
+			protected function friendsResult_faultHandler(event:FaultEvent):void
+			{
+				trace("Geez, you broke it!");
+				// TODO Auto-generated method stub
+			}
+			
+			
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<twitterfriends:TwitterFriends id="twitterTest" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="friendsResult" fault="friendsResult_faultHandler(event)" />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Panel width="700" height="600" horizontalCenter="0" verticalCenter="0" title="EXTERMINATWEET!  -  Helping twitter users decide who to unfollow since 1926. GodStroke Co.">
+		<s:layout>
+			<s:BasicLayout/>
+		</s:layout>
+		<mx:DataGrid id="dataGrid"  dataProvider="{filteredUsers}" left="10" top="40" right="10" bottom="10">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Screen Name" width="110" dataField="screen_name"/>
+				<!--mx:DataGridColumn headerText="profile_image_url" dataField="profile_image_url" itemRenderer="friendRenderer"/-->
+				<mx:DataGridColumn headerText="Profile Picture"  itemRenderer="friendRenderer" width="48"/>
+				
+				
+				
+				<mx:DataGridColumn headerText="Not Posting Lately" dataField="infrequent" minWidth="110"/>
+				<mx:DataGridColumn headerText="Following too many people" dataField="muchfollowing" minWidth="145"/>
+				<mx:DataGridColumn headerText="Noob" dataField="noob" minWidth="40"/>
+				<mx:DataGridColumn headerText="Few tweets" dataField="idle" minWidth="70"/>
+				<mx:DataGridColumn headerText="Poor description" dataField="undescripted" minWidth="90"/>
+				
+				
+				
+				<!--
+				<mx:DataGridColumn headerText="followers_count" dataField="followers_count"/>
+				<mx:DataGridColumn headerText="friends_count" dataField="friends_count"/>
+				<mx:DataGridColumn headerText="created_at" dataField="created_at"/>
+				<mx:DataGridColumn headerText="following" dataField="following"/>
+				<mx:DataGridColumn headerText="statuses_count" dataField="statuses_count"/>
+				<mx:DataGridColumn headerText="status" dataField="status"/>
+				-->
+				
+				
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup height="25" left="10" top="10" right="10" verticalAlign="middle">
+			<s:Label text="Your User Name:"/>
+			<s:TextInput id="uname" enter="gobtn_clickHandler()" text=""/>
+			<s:Button label="GO" id="gobtn" enabled="true" click="gobtn_clickHandler()"/>
+			<s:Label text="Total:"/>
+			<s:TextArea height="22" width="57" y="-1" id="txt_total" text="0" editable="false"/>
+			<s:Label text="Filtered:"/>
+			<s:TextArea height="22" width="57" id="txt_filtered" text="0" editable="false"/>
+		</s:HGroup>
+	</s:Panel>
+</s:Application>

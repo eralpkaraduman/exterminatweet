@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						  xmlns:s="library://ns.adobe.com/flex/spark" 
+						  xmlns:mx="library://ns.adobe.com/flex/mx" 
+						  focusEnabled="true"
+						  creationComplete="oncc()">
+	<s:Label id="lblData" top="0" left="0" right="0" bottom="0" text="{dataGridListData.label}" />
+	<mx:Image id="profile_image_url" height="48" source="{data.profile_image_url}"/>
+	<fx:Script>
+		<![CDATA[
+			import flash.net.navigateToURL;
+			public function oncc():void{
+				buttonMode = true;
+				
+				addEventListener(MouseEvent.CLICK,clickListener);
+			}
+			
+			public function clickListener(e:MouseEvent):void{
+				navigateToURL(new URLRequest(String(data.link)));
+			}
+		]]>
+	</fx:Script>
+</s:MXDataGridItemRenderer>
